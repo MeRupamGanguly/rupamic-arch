@@ -1,0 +1,19 @@
+syntax="proto3";
+
+package gogen;
+
+option go_package = "/gogen";
+
+message TickerRequest {
+    string symbol = 1;
+}
+
+message TickerResponse {
+    string symbol = 1;
+    double ltp = 2;
+    string timestamp = 3; 
+}
+
+service TickerStreamService{
+    rpc TickerStream (stream TickerRequest)returns(stream TickerResponse);
+}

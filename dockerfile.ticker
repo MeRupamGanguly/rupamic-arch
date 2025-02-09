@@ -1,0 +1,8 @@
+FROM golang:1.23.6
+RUN apt update
+COPY /ticker /ticker
+RUN apt install protobuf-compiler -y
+RUN go install google.golang.org/protobuf/cmd/protoc-gen-go@latest
+RUN go install google.golang.org/grpc/cmd/protoc-gen-go-grpc@latest
+RUN mkdir -p /ticker/domain/gogen
+RUN protoc --proto_path=/ticker/domain --go_out=/ticker/domain --go-grpc_out=/ticker/domain /ticker/domain/ticker.proto
