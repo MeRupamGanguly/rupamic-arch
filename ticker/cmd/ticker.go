@@ -16,6 +16,9 @@ import (
 func main() {
 	termSig := make(chan os.Signal, 1)
 	signal.Notify(termSig, syscall.SIGINT, syscall.SIGTERM)
+	closeCh := make(chan bool)
+	go usecase.TickProducer(closeCh)
+
 	grpcServer := grpc.NewServer()
 	svc := usecase.NewGrpcService()
 	gogen.RegisterTickerStreamServiceServer(grpcServer, svc)
@@ -29,6 +32,7 @@ func main() {
 		}
 	}()
 	<-termSig
+	closeCh <- true
 	grpcServer.GracefulStop()
 	log.Println("stoped")
 }
