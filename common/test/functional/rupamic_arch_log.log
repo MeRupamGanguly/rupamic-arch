@@ -1,0 +1,3 @@
+2025/02/10 19:36:10 Started:  GET   /test/path
+2025/02/10 19:36:10 HttpHandlerTester Called.
+2025/02/10 19:36:10 Completed  GET   /test/path  Time taken:  17.89µs
