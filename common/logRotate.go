@@ -7,7 +7,18 @@ import (
 )
 
 func SetLogOut() *os.File {
-	logFile, err := os.OpenFile(LogPath, os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0666)
+	homeDir, err := os.UserHomeDir()
+	if err != nil {
+		log.Fatal(err)
+	}
+	logDir := homeDir + "/rupamic_arch_log"
+	if _, err := os.Stat(logDir); os.IsNotExist(err) {
+		err = os.MkdirAll(logDir, 0755)
+		if err != nil {
+			log.Fatal(err)
+		}
+	}
+	logFile, err := os.OpenFile(logDir+"/"+LogPath, os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0666)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -15,7 +26,18 @@ func SetLogOut() *os.File {
 	return logFile
 }
 func SetLogOutTesting() *os.File {
-	logFile, err := os.OpenFile(LogPathTesting, os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0666)
+	homeDir, err := os.UserHomeDir()
+	if err != nil {
+		log.Fatal(err)
+	}
+	logDir := homeDir + "/rupamic_arch_log"
+	if _, err := os.Stat(logDir); os.IsNotExist(err) {
+		err = os.MkdirAll(logDir, 0755)
+		if err != nil {
+			log.Fatal(err)
+		}
+	}
+	logFile, err := os.OpenFile(logDir+"/"+LogPathTesting, os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0666)
 	if err != nil {
 		log.Fatal(err)
 	}
