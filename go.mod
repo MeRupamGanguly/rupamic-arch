@@ -3,6 +3,7 @@ module rupamic-arch
 go 1.23.6
 
 require (
+	github.com/golang-jwt/jwt/v5 v5.2.1
 	google.golang.org/grpc v1.70.0
 	google.golang.org/protobuf v1.36.5
 )
