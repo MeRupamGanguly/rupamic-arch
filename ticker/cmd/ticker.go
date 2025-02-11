@@ -15,7 +15,7 @@ import (
 
 func main() {
 	logFile := common.SetLogOut()
-	logFile.Close()
+	defer logFile.Close()
 	termSig := make(chan os.Signal, 1)
 	signal.Notify(termSig, syscall.SIGINT, syscall.SIGTERM)
 	closeCh := make(chan bool)

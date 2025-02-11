@@ -33,7 +33,7 @@ func HttpHandlerTester(w http.ResponseWriter, r *http.Request) {
 	fmt.Fprintf(w, "HttpHandlerTester called, UserID %s", userId)
 }
 func TestAuthAndLogMiddlewares(t *testing.T) {
-	logFile := common.SetLogOutTesting()
+	logFile := common.SetLogOut()
 	defer logFile.Close()
 	userId := "12345678901234"
 	roles := []string{"Admin", "SuperDamin"}
