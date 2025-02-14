@@ -2,6 +2,7 @@ package handler
 
 import (
 	"net/http"
+	"rupamic-arch/common/auth"
 	"rupamic-arch/user/contracts"
 	"rupamic-arch/user/domain"
 )
@@ -53,10 +54,16 @@ func (h *handler) SignInUser(w http.ResponseWriter, r *http.Request) {
 		EncodeSignIn(w, "", err)
 		return
 	}
-	id, err := h.svc.Signin(userId, password)
+	user, err := h.svc.Signin(userId, password)
 	if err != nil {
 		EncodeSignIn(w, "", err)
 		return
 	}
-	EncodeSignIn(w, id, nil)
+	token, err := auth.CreateToken(user.Id, user.Roles)
+	if err != nil {
+		EncodeSignIn(w, "", err)
+		return
+	}
+	w.Header().Set("Authorization", "Bearer "+token)
+	EncodeSignIn(w, user.Id, nil)
 }

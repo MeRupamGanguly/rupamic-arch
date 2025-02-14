@@ -6,6 +6,7 @@ import (
 	"net/http"
 	"net/http/httptest"
 	"rupamic-arch/common"
+	"rupamic-arch/common/auth"
 	"rupamic-arch/common/middlewares"
 	"testing"
 )
@@ -37,7 +38,7 @@ func TestAuthAndLogMiddlewares(t *testing.T) {
 	defer logFile.Close()
 	userId := "12345678901234"
 	roles := []string{"Admin", "SuperDamin"}
-	token, err := middlewares.CreateToken(userId, roles)
+	token, err := auth.CreateToken(userId, roles)
 	if err != nil {
 		t.Errorf("Test failed: got %v, want %v", err, nil)
 	}
