@@ -1,8 +1,9 @@
 package domain
 
 type User struct {
-	Id    string
-	Name  string
-	Email string
-	Roles []string
+	Id       string
+	Name     string
+	Password string
+	Email    string
+	Roles    []string
 }

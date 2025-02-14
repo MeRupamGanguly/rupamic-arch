@@ -19,8 +19,8 @@ func (svc *service) AddUser(user domain.User) (userId string, err error) {
 	svc.db.AddUser(user)
 	return
 }
-func (svc *service) GetUser(id string) (user domain.User, err error) {
-	svc.db.GetUser(id)
+func (svc *service) GetUser(id string, sort string) (user domain.User, err error) {
+	svc.db.GetUser(id, sort)
 	return
 }
 func (svc *service) Signin(userid string, password string) (userId string, err error) {
