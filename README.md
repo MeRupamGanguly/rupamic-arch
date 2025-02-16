@@ -7,9 +7,9 @@
 ```proto
 syntax="proto3";
 
-package domain;
+package gogen;
 
-option go_package = "/domain";
+option go_package = "/gogen";
 
 message TickerRequest {
     string symbol = 1;

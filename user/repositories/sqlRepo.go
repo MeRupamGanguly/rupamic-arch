@@ -19,7 +19,7 @@ func (r *repo) GetUser(id string, sort string) (user domain.User, err error) {
 	log.Println(id, sort)
 	return
 }
-func (r *repo) Signin(userId string, password string) (user domain.User, err error) {
-	log.Println(userId, password)
+func (r *repo) Signin(userId string) (user domain.User, err error) {
+	log.Println(userId)
 	return
 }
