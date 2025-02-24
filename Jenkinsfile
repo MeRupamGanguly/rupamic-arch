@@ -7,13 +7,10 @@ pipeline {
         REPO_URL = 'https://github.com/MeRupamGanguly/rupamic-arch.git'
         BRANCH_NAME = 'jenk' // Change this to the specific branch
     }
-    
+
     stages {
         stage('Checkout') {
-            when {
-                // Only proceed if the commit is from the specified branch
-                branch 'jenk'  // Change 'jenk' to your desired branch
-            }
+            
             steps {
                 // Checkout the code from GitHub repository
                 git branch: "${BRANCH_NAME}", url: "${REPO_URL}"
@@ -21,9 +18,7 @@ pipeline {
         }
 
         stage('Install Dependencies') {
-            when {
-                branch 'jenk'  // Ensure this stage runs only on the jenk branch
-            }
+            
             steps {
                 script {
                     // Install Go dependencies (assumes go.mod and go.sum are present)
@@ -33,9 +28,7 @@ pipeline {
         }
 
         stage('Install GolangCI-Lint') {
-            when {
-                branch 'jenk'  // Ensure this stage runs only on the jenk branch
-            }
+            
             steps {
                 script {
                     // Install golangci-lint if it is not installed
@@ -53,9 +46,7 @@ pipeline {
         }
 
         stage('Lint and Static Analysis') {
-            when {
-                branch 'jenk'  // Ensure this stage runs only on the jenk branch
-            }
+            
             steps {
                 script {
                     // Run Go linters and static checks using golangci-lint
@@ -65,9 +56,7 @@ pipeline {
         }
 
         stage('Run Tests') {
-            when {
-                branch 'jenk'  // Ensure this stage runs only on the jenk branch
-            }
+           
             steps {
                 script {
                     // Run Golang tests
@@ -78,9 +67,7 @@ pipeline {
         }
 
         stage('Build Binaries') {
-            when {
-                branch 'jenk'  // Ensure this stage runs only on the jenk branch
-            }
+           
             steps {
                 script {
                     // Set GOOS and GOARCH to build for the desired platform
@@ -90,9 +77,7 @@ pipeline {
         }
 
         stage('Docker Build') {
-            when {
-                branch 'jenk'  // Ensure this stage runs only on the jenk branch
-            }
+           
             steps {
                 script {
                     // Create Docker image using the minimal base image
@@ -105,9 +90,7 @@ pipeline {
         }
 
         stage('Run Docker Container') {
-            when {
-                branch 'jenk'  // Ensure this stage runs only on the jenk branch
-            }
+           
             steps {
                 script {
                     // Run the Docker container
@@ -120,9 +103,7 @@ pipeline {
         }
 
         stage('Cleanup') {
-            when {
-                branch 'jenk'  // Ensure this stage runs only on the jenk branch
-            }
+           
             steps {
                 script {
                     // Clean up unnecessary files after build
