@@ -7,12 +7,7 @@ pipeline {
         REPO_URL = 'https://github.com/MeRupamGanguly/rupamic-arch.git'
         BRANCH_NAME = 'jenk' // Change this to the specific branch
     }
-
-    triggers {
-        // Trigger the pipeline when there is a commit to GitHub, for any branch
-        githubPush()
-    }
-
+    
     stages {
         stage('Checkout') {
             when {
