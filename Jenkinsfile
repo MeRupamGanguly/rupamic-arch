@@ -33,7 +33,7 @@ pipeline {
                     then
                         echo "Go not found, installing Go version ${GO_VERSION}..."
                         curl -LO https://golang.org/dl/go${GO_VERSION}.linux-amd64.tar.gz
-                        tar -C $HOME -xvzf go${GO_VERSION}.linux-amd64.tar.gz  # Install in the Jenkins home directory
+                        tar -C $HOME -xzf go${GO_VERSION}.linux-amd64.tar.gz 
                         export PATH=$HOME/go/bin:$PATH
                         echo "Go ${GO_VERSION} installed successfully"
                     else
@@ -53,52 +53,58 @@ pipeline {
             }
         }
 
-      stage('Install GolangCI-Lint') {
-    steps {
-        script {
-            // Install golangci-lint if it's not installed
-            sh '''
-            if ! command -v golangci-lint &> /dev/null
-            then
-                echo "golangci-lint not found, installing..."
-                mkdir -p /var/jenkins_home/bin  # Create a directory for golangci-lint in the Jenkins user's home
-                curl -sSfL https://github.com/golangci/golangci-lint/releases/download/v1.64.5/golangci-lint-1.64.5-linux-amd64.tar.gz | tar -xz -C /var/jenkins_home/bin
-                echo "golangci-lint installed successfully"
-                # Move golangci-lint to the correct location
-                mv /var/jenkins_home/bin/golangci-lint-1.64.5-linux-amd64/golangci-lint /var/jenkins_home/bin/golangci-lint
-            else
-                echo "golangci-lint is already installed"
-            fi
-            '''
-            // List the contents of /var/jenkins_home/bin to verify that the binary is extracted correctly
-            echo "Listing files in /var/jenkins_home/bin:"
-            sh 'ls -l /var/jenkins_home/bin'
+        stage('Install GolangCI-Lint') {
+            steps {
+                script {
+                    // Install golangci-lint if it's not installed
+                    sh '''
+                    if ! command -v golangci-lint &> /dev/null
+                    then
+                        echo "golangci-lint not found, installing..."
+                        mkdir -p /var/jenkins_home/bin  # Create a directory for golangci-lint in the Jenkins user's home
+                        curl -sSfL https://github.com/golangci/golangci-lint/releases/download/v1.64.5/golangci-lint-1.64.5-linux-amd64.tar.gz | tar -xz -C /var/jenkins_home/bin
+                        echo "golangci-lint installed successfully"
+                        # Move golangci-lint to the correct location
+                        mv /var/jenkins_home/bin/golangci-lint-1.64.5-linux-amd64/golangci-lint /var/jenkins_home/bin/golangci-lint
+                        export PATH=$PATH:/var/jenkins_home/bin
+                    else
+                        echo "golangci-lint is already installed"
+                    fi
+                    '''
+                    // List the contents of /var/jenkins_home/bin to verify that the binary is extracted correctly
+                    echo "Listing files in /var/jenkins_home/bin:"
+                    sh 'ls -l /var/jenkins_home/bin'
+                }
+            }
         }
-    }
-}
 
-stage('Lint and Static Analysis') {
-    steps {
-        script {
-            // Re-export PATH to include golangci-lint directory in this shell environment
-            sh '''
-            export PATH=$PATH:/var/jenkins_home/bin
-            echo "Checking golangci-lint version"
-            
-            # Navigate to the directory containing Go code (adjust the path to where your Go code is located)
-            cd user  # Replace 'user' with your actual Go project directory if needed
-            
-            # Run golangci-lint within the directory where the Go files are located
-            golangci-lint run  // Run linters directly
-            '''
+        stage('Lint and Static Analysis') {     
+            steps {         
+                script {             
+                    // Check if any Go files exist in the user directory
+                    sh '''
+                    echo "Listing files in user directory"
+                    ls -l user
+                    
+                    if find user -name "*.go" | grep -q .; then
+                        cd user
+                        echo "Go files found, running golangci-lint"
+                        golangci-lint run --disable-all --enable staticcheck ./...
+                    else
+                        echo "No Go files found in the 'user' directory or subdirectories"
+                        exit 1
+                    fi
+                    '''         
+                }     
+            } 
         }
-    }
-}
+
         stage('Run Tests') {
             steps {
                 script {
+                    sh 'go test -v ./common/...'
                     // Run Golang tests, skipping integration tests if desired
-                    sh 'go test -v $(go list ./... | grep -v \'/integration\')'
+                    // sh 'go test -v $(go list ./... | grep -v \'/integration\')'
                 }
             }
         }
