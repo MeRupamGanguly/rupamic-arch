@@ -2,6 +2,7 @@ package repositories
 
 import (
 	"log"
+	"rupamic-arch/common"
 	"rupamic-arch/user/domain"
 )
 
@@ -17,9 +18,19 @@ func (r *repo) AddUser(user domain.User) (userId string, err error) {
 }
 func (r *repo) GetUser(id string, sort string) (user domain.User, err error) {
 	log.Println(id, sort)
+	user = domain.User{
+		Name:  "r",
+		Email: "r@tm.com",
+		Roles: []string{common.ADMINROLE},
+	}
 	return
 }
 func (r *repo) Signin(userId string) (user domain.User, err error) {
 	log.Println(userId)
+	user = domain.User{
+		Name:  "r",
+		Email: "r@tm.com",
+		Roles: []string{common.ADMINROLE},
+	}
 	return
 }

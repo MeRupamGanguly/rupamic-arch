@@ -4,6 +4,7 @@ import (
 	"rupamic-arch/common"
 	"rupamic-arch/user/contracts"
 	"rupamic-arch/user/domain"
+	"strings"
 )
 
 type service struct {
@@ -17,6 +18,15 @@ func NewUserService(repo contracts.RepositoryContracts) *service {
 }
 
 func (svc *service) AddUser(user domain.User) (userId string, err error) {
+	var roles []string
+	if !strings.Contains(user.Email, "tm.com") {
+		for _, role := range user.Roles {
+			if role != common.ADMINROLE || role != common.SUPERADMINROLE {
+				roles = append(roles, role)
+			}
+		}
+		user.Roles = roles
+	}
 	svc.db.AddUser(user)
 	return
 }

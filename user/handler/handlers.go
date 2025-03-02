@@ -2,6 +2,7 @@ package handler
 
 import (
 	"net/http"
+	"rupamic-arch/common"
 	"rupamic-arch/common/auth"
 	"rupamic-arch/user/contracts"
 	"rupamic-arch/user/domain"
@@ -64,6 +65,8 @@ func (h *handler) SignInUser(w http.ResponseWriter, r *http.Request) {
 		EncodeSignIn(w, "", err)
 		return
 	}
+	key := common.CreateAPIKey(user.Roles)
 	w.Header().Set("Authorization", "Bearer "+token)
+	w.Header().Set("API-KEY", key)
 	EncodeSignIn(w, user.Id, nil)
 }
