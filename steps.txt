@@ -1,0 +1,103 @@
+rupam@laptop:~/Projects/rupamic-arch$ docker network create archnet
+2ee4cfbd9b804d1ee450638552300ca3383cbe2d14206d4173a14b4790f9f351
+rupam@laptop:~/Projects/rupamic-arch$ docker network ls
+NETWORK ID     NAME      DRIVER    SCOPE
+2ee4cfbd9b80   archnet   bridge    local
+3ffed211c126   bridge    bridge    local
+55c6a88e4b55   host      host      local
+ef5d05fd4bc8   none      null      local
+rupam@laptop:~/Projects/rupamic-arch$ docker volume ls
+DRIVER    VOLUME NAME
+local     53973ef63efbaea485939ede1b74bb54d306f87ffe1824b7234e05d90e721787
+rupam@laptop:~/Projects/rupamic-arch$ docker run -d --name redis --network=archnet -p 6379:6379 redis
+df62ca8c61953fb7c5b42dc94ad60c360a09eea270f635d6755526fb79fe2ddc
+rupam@laptop:~/Projects/rupamic-arch$ docker build -t userimage -f dockerfile.user .
+DEPRECATED: The legacy builder is deprecated and will be removed in a future release.
+            Install the buildx component to build images with BuildKit:
+            https://docs.docker.com/go/buildx/
+
+Sending build context to Docker daemon  319.5kB
+Step 1/13 : FROM golang:1.24.0-alpine as builder
+ ---> 8f8e4dc60ac8
+Step 2/13 : WORKDIR /app
+ ---> Running in f030ca2c8a1f
+ ---> Removed intermediate container f030ca2c8a1f
+ ---> 6df22662c6c9
+Step 3/13 : COPY go.mod ./
+ ---> 2874f683484c
+Step 4/13 : COPY . /app/
+ ---> a8edcd8660f0
+Step 5/13 : RUN go mod tidy
+ ---> Running in 04e627ca7655
+go: downloading google.golang.org/grpc v1.70.0
+go: downloading github.com/redis/go-redis/v9 v9.7.1
+go: downloading google.golang.org/protobuf v1.36.5
+go: downloading github.com/golang-jwt/jwt/v5 v5.2.1
+go: downloading github.com/gorilla/mux v1.8.1
+go: downloading golang.org/x/crypto v0.30.0
+go: downloading github.com/dgryski/go-rendezvous v0.0.0-20200823014737-9f7001d12a5f
+go: downloading github.com/cespare/xxhash/v2 v2.3.0
+go: downloading github.com/bsm/gomega v1.27.10
+go: downloading github.com/bsm/ginkgo/v2 v2.12.0
+go: downloading golang.org/x/net v0.32.0
+go: downloading github.com/google/go-cmp v0.6.0
+go: downloading golang.org/x/sys v0.28.0
+go: downloading google.golang.org/genproto/googleapis/rpc v0.0.0-20241202173237-19429a94021a
+go: downloading go.opentelemetry.io/otel v1.32.0
+go: downloading go.opentelemetry.io/otel/sdk/metric v1.32.0
+go: downloading github.com/golang/protobuf v1.5.4
+go: downloading go.opentelemetry.io/otel/metric v1.32.0
+go: downloading go.opentelemetry.io/otel/trace v1.32.0
+go: downloading go.opentelemetry.io/otel/sdk v1.32.0
+go: downloading github.com/go-logr/logr v1.4.2
+go: downloading github.com/go-logr/stdr v1.2.2
+go: downloading github.com/google/uuid v1.6.0
+go: downloading golang.org/x/text v0.21.0
+ ---> Removed intermediate container 04e627ca7655
+ ---> 9ad1b8225000
+Step 6/13 : WORKDIR /app/user/cmd
+ ---> Running in 7d2d7c577bc0
+ ---> Removed intermediate container 7d2d7c577bc0
+ ---> e5ff768973ae
+Step 7/13 : RUN go build -o /app/user/cmd/user ./user.go
+ ---> Running in c0860ed0e0b1
+ ---> Removed intermediate container c0860ed0e0b1
+ ---> c0d43fbd94d7
+Step 8/13 : FROM alpine:3.16
+ ---> d49a5025be10
+Step 9/13 : RUN apk --no-cache add ca-certificates
+ ---> Running in ac1dca31d971
+fetch https://dl-cdn.alpinelinux.org/alpine/v3.16/main/x86_64/APKINDEX.tar.gz
+fetch https://dl-cdn.alpinelinux.org/alpine/v3.16/community/x86_64/APKINDEX.tar.gz
+(1/1) Installing ca-certificates (20240226-r0)
+Executing busybox-1.35.0-r17.trigger
+Executing ca-certificates-20240226-r0.trigger
+OK: 6 MiB in 15 packages
+ ---> Removed intermediate container ac1dca31d971
+ ---> e2a4a0a14bac
+Step 10/13 : WORKDIR /app
+ ---> Running in c05aee3f1555
+ ---> Removed intermediate container c05aee3f1555
+ ---> 00d73b5e5fd0
+Step 11/13 : COPY --from=builder /app/user/cmd/user /usr/local/bin/user
+ ---> 205a7a16b45d
+Step 12/13 : EXPOSE 5002
+ ---> Running in 2bf4e687f173
+ ---> Removed intermediate container 2bf4e687f173
+ ---> b7942122a097
+Step 13/13 : ENTRYPOINT ["user"]
+ ---> Running in c2b855359756
+ ---> Removed intermediate container c2b855359756
+ ---> 29a13a92a4f4
+Successfully built 29a13a92a4f4
+Successfully tagged userimage:latest
+rupam@laptop:~/Projects/rupamic-arch$ docker run -it --network=archnet -p 5002:5002 --name usercontainer userimage /bin/sh
+Redis Ping Response: PONG
+API KEY Called: apiKey 1741077939655877904-$2a$10$a48sb43VjyLDZBM9ELSiNesbbXNXte6x16gHVnVRNsc9HsfH6Q1v6  ROle  ADMINROLE
+Query Key rupam_rate_limiting172.18.0.1
+Rate Limiting Called: Count  0
+API KEY Called: apiKey 1741077939655877904-$2a$10$a48sb43VjyLDZBM9ELSiNesbbXNXte6x16gHVnVRNsc9HsfH6Q1v6  ROle  ADMINROLE
+Query Key rupam_rate_limiting172.18.0.1
+Rate Limiting Called: Count  1
+API KEY Called: apiKey 1741077939655877904-$2a$10$a48sb43VjyLDZBM9ELSiNesbbXNXte6x16gHVnVRNsc9HsfH6Q1v6  ROle  ADMINROLE
+Query Key rupam_rate_limiting172.18.0.1

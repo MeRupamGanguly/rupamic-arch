@@ -18,7 +18,7 @@ func main() {
 	logFile := common.SetLogOut()
 	defer logFile.Close()
 	rdb := redis.NewClient(&redis.Options{
-		Addr: "0.0.0.0:6379",
+		Addr: "redis:6379",
 	})
 	pong, err := rdb.Ping(context.Background()).Result()
 	if err != nil {
