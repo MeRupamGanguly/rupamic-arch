@@ -2,8 +2,10 @@ package middlewares
 
 import (
 	"context"
+	"fmt"
 	"net/http"
 	"rupamic-arch/common"
+	"strings"
 
 	"github.com/redis/go-redis/v9"
 )
@@ -23,8 +25,9 @@ func NewRLimit(rdb *redis.Client) *rlimit {
 
 func (rl *rlimit) RateLimiting(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		reqIp := r.RemoteAddr
+		reqIp := strings.Split(r.RemoteAddr, ":")[0]
 		queryKey := common.ApiRateLimitKey + reqIp
+		fmt.Println("Query Key", queryKey)
 		reqCount, err := rl.rdb.Get(context.Background(), queryKey).Int()
 
 		if err == redis.Nil || reqCount < common.ApiRateLimitMaxRequests {
@@ -33,7 +36,7 @@ func (rl *rlimit) RateLimiting(next http.Handler) http.Handler {
 			if err == redis.Nil {
 				rl.rdb.Expire(context.Background(), queryKey, common.ApiRateLimitDuration)
 			}
-
+			fmt.Println("Rate Limiting Called: Count ", reqCount)
 			next.ServeHTTP(w, r)
 		} else {
 			http.Error(w, common.ErrRateLimiting.Error(), http.StatusUnauthorized)

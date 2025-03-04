@@ -28,9 +28,10 @@ func (r *repo) GetUser(id string, sort string) (user domain.User, err error) {
 func (r *repo) Signin(userId string) (user domain.User, err error) {
 	log.Println(userId)
 	user = domain.User{
-		Name:  "r",
-		Email: "r@tm.com",
-		Roles: []string{common.ADMINROLE},
+		Name:     "r",
+		Email:    "r@tm.com",
+		Password: "r@tm",
+		Roles:    []string{common.ADMINROLE},
 	}
 	return
 }

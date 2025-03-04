@@ -13,6 +13,7 @@ func UserRoutes(svc contracts.ServiceContracts, rl middlewares.RateLimiting) *mu
 	r := mux.NewRouter()
 	r.HandleFunc("/user/add", h.AddUser).Methods(http.MethodPost)
 	r.Handle("/user/get", middlewares.AuthMiddleware(middlewares.APPIKeyCheck(rl.RateLimiting(http.HandlerFunc(h.GetUser))))).Methods(http.MethodGet)
+	// r.HandleFunc("/user/get", h.GetUser).Methods(http.MethodGet)
 	r.HandleFunc("/user/signin", h.SignInUser).Methods(http.MethodPost)
 
 	return r

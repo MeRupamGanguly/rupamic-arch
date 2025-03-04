@@ -18,6 +18,10 @@ const (
 
 var APIKEYS map[string]string
 
+func APIKEYS_INIT() {
+	APIKEYS = make(map[string]string)
+}
+
 func APIKeyAddedInDB(key, val string) {
 	APIKEYS[key] = val
 }

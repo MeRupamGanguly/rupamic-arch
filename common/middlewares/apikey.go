@@ -2,6 +2,7 @@ package middlewares
 
 import (
 	"context"
+	"fmt"
 	"net/http"
 	"rupamic-arch/common"
 )
@@ -20,6 +21,7 @@ func APPIKeyCheck(next http.Handler) http.Handler {
 			return
 		}
 		r = r.WithContext(context.WithValue(r.Context(), "role", role))
+		fmt.Println("API KEY Called: apiKey", apiKey, " ROle ", role)
 		next.ServeHTTP(w, r)
 	})
 }

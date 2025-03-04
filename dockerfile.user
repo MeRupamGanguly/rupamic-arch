@@ -1,0 +1,25 @@
+FROM golang:1.24.0-alpine as builder
+
+WORKDIR /app
+
+COPY go.mod ./
+
+COPY . /app/
+
+RUN go mod tidy
+
+WORKDIR /app/user/cmd
+
+RUN go build -o /app/user/cmd/user ./user.go
+
+FROM alpine:3.16
+
+RUN apk --no-cache add ca-certificates
+
+WORKDIR /app
+
+COPY --from=builder /app/user/cmd/user /usr/local/bin/user
+
+EXPOSE 5002
+
+ENTRYPOINT ["user"]

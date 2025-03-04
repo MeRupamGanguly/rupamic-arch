@@ -9,9 +9,8 @@ import (
 
 func GenerateApiKey(role string) string {
 	now := time.Now().UnixNano()
-	date := time.Now().Format("DDMMYYYY")
 	hashed := Encrypt(strings.ToUpper(role))
-	apikey := fmt.Sprintf("%v-%v-%v", now, date, hashed)
+	apikey := fmt.Sprintf("%v-%v", now, hashed)
 	return apikey
 }
 

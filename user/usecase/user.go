@@ -39,9 +39,9 @@ func (svc *service) Signin(userId string, password string) (user domain.User, er
 	if err != nil {
 		return
 	}
-	matched, err := common.Decrypt(user.Password, password)
-	if !matched {
-		return domain.User{}, common.ErrUserCredWrong
-	}
+	// matched, err := common.Decrypt(user.Password, password)
+	// if !matched {
+	// 	return domain.User{}, common.ErrUserCredWrong
+	// }
 	return
 }
